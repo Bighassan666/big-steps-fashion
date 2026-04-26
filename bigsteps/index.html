@@ -700,6 +700,32 @@
       th, td { padding: 10px 12px; }
       .action-btns { flex-direction: column; }
     }
+    /* Social icon buttons */
+    .social-icon-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 6px; font-size: 13px;
+      font-weight: 700; text-decoration: none; transition: all .2s;
+      border: 1px solid var(--border); color: var(--muted);
+      background: var(--bg3);
+    }
+    .social-icon-btn:hover { transform: translateY(-2px); color: var(--text); border-color: var(--gold); }
+    .social-icon-btn .si { font-size: 18px; }
+
+    /* Contact info rows */
+    .contact-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px; background: var(--bg3); border-radius: 8px;
+      border: 1px solid var(--border); text-decoration: none; color: var(--text);
+      transition: border-color .2s;
+    }
+    .contact-row:hover { border-color: var(--gold); }
+    .contact-row .cr-icon { font-size: 22px; flex-shrink: 0; }
+    .contact-row .cr-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .contact-row .cr-val { font-size: 14px; font-weight: 600; margin-top: 2px; }
+
+    @media(max-width:640px) {
+      #page-contact .section > div:first-child { grid-template-columns: 1fr !important; }
+    }
   </style>
 </head>
 <body>
@@ -722,6 +748,7 @@
     <li><a href="#" onclick="navigate('shop','shirts')" id="nav-shirts">Shirts</a></li>
     <li><a href="#" onclick="navigate('shop','dresses')">Dresses</a></li>
     <li><a href="#" onclick="navigate('shop','accessories')">Accessories</a></li>
+    <li><a href="#" onclick="navigate('contact')" id="nav-contact">Contact</a></li>
   </ul>
   <div class="nav-actions">
     <a href="#" onclick="navigate('admin-login')" class="admin-link" id="admin-nav-link">Admin</a>
@@ -809,6 +836,8 @@
       <div class="footer-brand">
         <div class="logo">BIG STEPS FASHION</div>
         <p>Premium fashion for the bold. Quality pieces crafted for confidence. Walk your path in style.</p>
+        <!-- Social Icons -->
+        <div id="footer-socials" style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"></div>
       </div>
       <div class="footer-col">
         <h4>Shop</h4>
@@ -816,20 +845,18 @@
         <a href="#" onclick="navigate('shop','dresses')">Dresses</a>
         <a href="#" onclick="navigate('shop','accessories')">Accessories</a>
         <a href="#" onclick="navigate('shop','shoes')">Shoes</a>
+        <a href="#" onclick="navigate('shop','traditional')">Traditional</a>
       </div>
       <div class="footer-col">
         <h4>Info</h4>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
+        <a href="#" onclick="navigate('contact')">Contact Us</a>
         <a href="#">Sizing Guide</a>
-        <a href="#">Returns</a>
+        <a href="#">Returns Policy</a>
+        <a href="#">Delivery Info</a>
       </div>
-      <div class="footer-col">
-        <h4>Payments</h4>
-        <a href="#">MTN Mobile Money</a>
-        <a href="#">Telecel Cash</a>
-        <a href="#">Bank Transfer</a>
-        <a href="#">Visa / Mastercard</a>
+      <div class="footer-col" id="footer-contact-col">
+        <h4>Contact</h4>
+        <!-- filled by JS -->
       </div>
     </div>
     <div class="footer-bottom">
@@ -1150,18 +1177,29 @@
 <!--                    JAVASCRIPT                          -->
 <!-- ═══════════════════════════════════════════════════════ -->
 <script>
-// ╔══════════════════════════════════════════════════════════╗
-// ║               ★  CONFIG — EDIT THIS  ★                  ║
-// ║   Fill in your keys before deploying                    ║
-// ╚══════════════════════════════════════════════════════════╝
 const CONFIG = {
-  supabaseUrl:        'YOUR_SUPABASE_URL',           // e.g. https://xxxx.supabase.co
-  supabaseAnonKey:    'YOUR_SUPABASE_ANON_KEY',      // from Supabase dashboard
-  paystackPublicKey:  'YOUR_PAYSTACK_PUBLIC_KEY',    // pk_live_... or pk_test_...
-  adminPassword:      'admin123',                    // ⚠ CHANGE THIS before going live!
-  storeEmail:         'your@email.com',              // Your store email
+  supabaseUrl:        'https://bjlpnimsajvbynqyzhll.supabase.co'
+  supabaseAnonKey:    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqbHBuaW1zYWp2YnlucXl6aGxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNzAxODQsImV4cCI6MjA5MjY0NjE4NH0.J7IiO7fOBYMjc61E2xK92WTtzLDKOi5ulMiYD9aK5II'
+  paystackPublicKey:  'pk_live_3a0f93d3ba0e7295c14580fd288bb77bf460badc'
+  adminPassword:      'Duckbillplatipus100%'
+  storeEmail:         'bigstepsfashion01@gmail.com'
   currency:           'GHS',
   currencySymbol:     '₵',
+};
+const CONTACT = {
+  phone:       '+233 547717114'
+  whatsapp:    '233547717114'
+  email:       'bigstepsfashion01@gmail.com'
+  location:    'Tamale, Ghana'
+  hours:       'Mon – Sun: 7am – 11pm',     // Business hours
+
+  // Social media 
+  instagram:   'https://instagram.com/bigghassan666',
+  facebook:    'https://www.facebook.com/profile.php?id=61588891945297'
+  tiktok:      'https://tiktok.com/@YOUR_HANDLE',
+  twitter:     'https://x.com/Bighassan666,
+  snapchat:    '',    // e.g. 'https://snapchat.com/bighassan_69'
+  youtube:     '',    // e.g. 'https://youtube.com/@YOUR_CHANNEL'
 };
 
 // ────────────────────────────────────────
@@ -1231,6 +1269,7 @@ function navigate(page, filter) {
     loadShopProducts();
   }
   if (page === 'admin') loadAdminDashboard();
+  if (page === 'contact') loadContactPage();
 
   // Update admin link visibility
   const adminNavLink = document.getElementById('admin-nav-link');
@@ -1975,11 +2014,114 @@ function closeOrderDetail() {
 }
 
 // ────────────────────────────────────────
+// Social Media & Contact
+// ────────────────────────────────────────
+const SOCIAL_META = {
+  instagram: { icon: '📸', label: 'Instagram', color: '#E1306C' },
+  facebook:  { icon: '👤', label: 'Facebook',  color: '#1877F2' },
+  tiktok:    { icon: '🎵', label: 'TikTok',    color: '#fff'    },
+  twitter:   { icon: '🐦', label: 'X / Twitter', color: '#1DA1F2' },
+  snapchat:  { icon: '👻', label: 'Snapchat',  color: '#FFFC00' },
+  youtube:   { icon: '▶️', label: 'YouTube',   color: '#FF0000' },
+};
+
+function buildSocials(containerId, style = 'icon') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const links = Object.entries(SOCIAL_META)
+    .filter(([key]) => CONTACT[key])
+    .map(([key, meta]) => {
+      if (style === 'icon') {
+        return `<a href="${CONTACT[key]}" target="_blank" rel="noopener"
+          class="social-icon-btn" title="${meta.label}">
+          <span class="si">${meta.icon}</span>${meta.label}
+        </a>`;
+      } else {
+        // full row style for contact page
+        return `<a href="${CONTACT[key]}" target="_blank" rel="noopener" class="contact-row">
+          <span class="cr-icon">${meta.icon}</span>
+          <div><div class="cr-label">${meta.label}</div>
+          <div class="cr-val">${CONTACT[key].replace('https://','').replace('http://','')}</div></div>
+        </a>`;
+      }
+    });
+  el.innerHTML = links.length ? links.join('') : '<span style="color:var(--muted);font-size:13px">No social links added yet.</span>';
+}
+
+function buildContactDetails() {
+  const el = document.getElementById('contact-details-list');
+  if (!el) return;
+  const rows = [];
+  if (CONTACT.phone) rows.push({ icon:'📞', label:'Phone', val: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/\s/g,'')}` });
+  if (CONTACT.whatsapp) rows.push({ icon:'💬', label:'WhatsApp', val: CONTACT.phone || `+${CONTACT.whatsapp}`, href: `https://wa.me/${CONTACT.whatsapp}` });
+  if (CONTACT.email) rows.push({ icon:'✉️', label:'Email', val: CONTACT.email, href: `mailto:${CONTACT.email}` });
+  if (CONTACT.location) rows.push({ icon:'📍', label:'Location', val: CONTACT.location, href: '#' });
+  if (CONTACT.hours) rows.push({ icon:'🕐', label:'Business Hours', val: CONTACT.hours, href: '#' });
+  el.innerHTML = rows.map(r => `
+    <a href="${r.href}" ${r.href.startsWith('http')||r.href.startsWith('tel')||r.href.startsWith('mailto') ? 'target="_blank"' : ''} rel="noopener" class="contact-row">
+      <span class="cr-icon">${r.icon}</span>
+      <div><div class="cr-label">${r.label}</div><div class="cr-val">${r.val}</div></div>
+    </a>`).join('');
+}
+
+function loadContactPage() {
+  buildContactDetails();
+  buildSocials('contact-socials-list', 'row');
+  buildSocials('contact-page-socials', 'icon');
+  const locEl = document.getElementById('contact-location-text');
+  const hrEl  = document.getElementById('contact-hours-text');
+  if (locEl) locEl.textContent = CONTACT.location || 'Ghana';
+  if (hrEl)  hrEl.textContent  = CONTACT.hours || '';
+}
+
+function openGoogleMaps() {
+  const q = encodeURIComponent(CONTACT.location || 'Ghana');
+  window.open(`https://maps.google.com/?q=${q}`, '_blank');
+}
+
+function sendWhatsAppMessage() {
+  const name  = document.getElementById('msg-name')?.value.trim();
+  const phone = document.getElementById('msg-phone')?.value.trim();
+  const email = document.getElementById('msg-email')?.value.trim();
+  const body  = document.getElementById('msg-body')?.value.trim();
+  if (!name || !body) { toast('Please enter your name and message', 'error'); return; }
+  const text = `Hello Big Steps Fashion! 👋\n\nName: ${name}\nPhone: ${phone||'N/A'}\nEmail: ${email||'N/A'}\n\nMessage:\n${body}`;
+  const wa = CONTACT.whatsapp || '';
+  if (!wa || wa === '233XXXXXXXXX') { toast('WhatsApp number not configured yet', 'error'); return; }
+  window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+function initContactWidgets() {
+  // Footer socials (home page)
+  buildSocials('footer-socials', 'icon');
+  // Footer contact column
+  const col = document.getElementById('footer-contact-col');
+  if (col) {
+    const lines = [];
+    if (CONTACT.phone) lines.push(`<a href="tel:${CONTACT.phone.replace(/\s/g,'')}">${CONTACT.phone}</a>`);
+    if (CONTACT.email) lines.push(`<a href="mailto:${CONTACT.email}">${CONTACT.email}</a>`);
+    if (CONTACT.location) lines.push(`<a href="#">${CONTACT.location}</a>`);
+    if (CONTACT.hours) lines.push(`<a href="#" style="cursor:default">${CONTACT.hours}</a>`);
+    col.innerHTML = '<h4>Contact</h4>' + lines.join('');
+  }
+  // WhatsApp FAB
+  const fab = document.getElementById('whatsapp-fab');
+  if (fab && CONTACT.whatsapp && CONTACT.whatsapp !== '233XXXXXXXXX') {
+    const msg = encodeURIComponent('Hello Big Steps Fashion! I\'d like to ask about your products. 👗');
+    fab.href = `https://wa.me/${CONTACT.whatsapp}?text=${msg}`;
+    fab.style.display = 'flex';
+  } else if (fab) {
+    fab.style.display = 'none'; // hide if not configured
+  }
+}
+
+// ────────────────────────────────────────
 // Init
 // ────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   updateCartUI();
+  initContactWidgets();
   setTimeout(() => {
     const ls = document.getElementById('loading-screen');
     ls.style.opacity = '0';
@@ -2002,5 +2144,90 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+<!-- CONTACT PAGE -->
+<div id="page-contact" class="page">
+  <div class="shop-header">
+    <h1>Get In <span style="color:var(--gold)">Touch</span></h1>
+    <p style="color:var(--muted);margin-top:8px;font-size:14px">We'd love to hear from you — reach out anytime!</p>
+  </div>
+  <div class="section">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1000px;margin:0 auto">
+
+      <!-- Contact Info Card -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="admin-panel" style="margin-bottom:0">
+          <h2 style="margin-bottom:20px">Contact Details</h2>
+          <div id="contact-details-list" style="display:flex;flex-direction:column;gap:16px"></div>
+        </div>
+
+        <!-- Social Media Card -->
+        <div class="admin-panel" style="margin-bottom:0">
+          <h2 style="margin-bottom:16px">Follow Us</h2>
+          <div id="contact-socials-list" style="display:flex;flex-direction:column;gap:12px"></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:16px">Follow us for new arrivals, style tips & exclusive offers!</p>
+        </div>
+      </div>
+
+      <!-- Send Message Form -->
+      <div class="admin-panel" style="margin-bottom:0">
+        <h2 style="margin-bottom:20px">Send a Message</h2>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" id="msg-name" placeholder="Kwame Mensah" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone / WhatsApp</label>
+            <input type="tel" id="msg-phone" placeholder="024 000 0000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email (optional)</label>
+            <input type="email" id="msg-email" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea id="msg-body" placeholder="I'd like to ask about..."></textarea>
+          </div>
+          <button class="btn-save" style="margin-top:4px" onclick="sendWhatsAppMessage()">
+            💬 Send via WhatsApp
+          </button>
+          <p style="font-size:12px;color:var(--muted);text-align:center">This will open WhatsApp with your message pre-filled.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Map / Location Banner -->
+    <div style="margin-top:32px;max-width:1000px;margin-left:auto;margin-right:auto;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="font-size:48px">📍</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Our Location</div>
+        <div style="font-size:20px;font-weight:700" id="contact-location-text"></div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px" id="contact-hours-text"></div>
+      </div>
+      <button class="btn-outline" style="margin-left:auto" onclick="openGoogleMaps()">Open in Maps →</button>
+    </div>
+  </div>
+
+  <!-- Footer repeated for contact page -->
+  <div style="padding:40px clamp(16px,4vw,64px);border-top:1px solid var(--border);text-align:center">
+    <div id="contact-page-socials" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px"></div>
+    <p style="font-size:12px;color:var(--muted)">© 2025 Big Steps Fashion. All rights reserved. 🇬🇭</p>
+  </div>
+</div>
+
+<!-- Floating WhatsApp Button -->
+<a id="whatsapp-fab" href="#" target="_blank" rel="noopener"
+   style="position:fixed;bottom:28px;right:28px;z-index:400;
+          width:56px;height:56px;border-radius:50%;
+          background:#25D366;display:flex;align-items:center;justify-content:center;
+          font-size:28px;box-shadow:0 4px 20px rgba(37,211,102,.45);
+          transition:transform .2s;text-decoration:none"
+   title="Chat on WhatsApp"
+   onmouseover="this.style.transform='scale(1.1)'"
+   onmouseout="this.style.transform='scale(1)'">
+  💬
+</a>
+
 </body>
 </html>
